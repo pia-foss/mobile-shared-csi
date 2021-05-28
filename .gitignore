@@ -43,4 +43,4 @@ dist
 apple_dist
 Preview.html
 Gemfile.lock
-
+*.podspec

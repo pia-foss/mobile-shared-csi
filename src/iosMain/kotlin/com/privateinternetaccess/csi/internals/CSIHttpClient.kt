@@ -18,6 +18,7 @@ package com.privateinternetaccess.csi.internals
  *  Internet Access Mobile Client.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.privateinternetaccess.csi.CSIRequestError
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.ios.Ios
 import io.ktor.client.features.HttpTimeout
@@ -29,31 +30,41 @@ import platform.Security.*
 
 
 actual object CSIHttpClient {
-    actual fun client(pinnedEndpoint: Pair<String, String>?) = HttpClient(Ios) {
-        expectSuccess = false
-        install(HttpTimeout) {
-            requestTimeoutMillis = CSI.REQUEST_TIMEOUT_MS
-        }
-        pinnedEndpoint?.let {
-            engine {
-                handleChallenge(CertificatePinner(pinnedEndpoint.first, pinnedEndpoint.second))
+    actual fun client(
+        certificate: String?,
+        pinnedEndpoint: Pair<String, String>?
+    ): Pair<HttpClient?, CSIRequestError.CSIException?> {
+        return Pair(HttpClient(Ios) {
+            expectSuccess = false
+            install(HttpTimeout) {
+                requestTimeoutMillis = CSI.REQUEST_TIMEOUT_MS
             }
-        }
+
+            if (certificate != null && pinnedEndpoint != null) {
+                engine {
+                    handleChallenge(
+                        CertificatePinner(
+                            certificate,
+                            pinnedEndpoint.first,
+                            pinnedEndpoint.second
+                        )
+                    )
+                }
+            }
+        }, null)
     }
 }
 
-private class CertificatePinner(private val hostname: String, private val commonName: String) : ChallengeHandler {
+private class CertificatePinner(certificate: String, private val hostname: String, private val commonName: String) : ChallengeHandler {
 
-    companion object {
-        private val certificateData = NSData.create(
-            base64EncodedString =
-            CSI.certificate
-                .replace("-----BEGIN CERTIFICATE-----", "")
-                .replace("-----END CERTIFICATE-----", "")
-                .replace("\n", ""),
-            options = NSDataBase64Encoding64CharacterLineLength
-        )
-    }
+    private val certificateData = NSData.create(
+        base64EncodedString =
+        certificate
+            .replace("-----BEGIN CERTIFICATE-----", "")
+            .replace("-----END CERTIFICATE-----", "")
+            .replace("\n", ""),
+        options = NSDataBase64Encoding64CharacterLineLength
+    )
 
     override fun invoke(
         session: NSURLSession,
@@ -69,6 +80,7 @@ private class CertificatePinner(private val hostname: String, private val common
 
         val serverTrust = challenge.protectionSpace.serverTrust
         val serverCertificateRef = SecTrustGetCertificateAtIndex(serverTrust, 0)
+        @Suppress("UNCHECKED_CAST")
         val certificateDataRef = CFBridgingRetain(certificateData) as CFDataRef
         val certificateRef = SecCertificateCreateWithData(null, certificateDataRef)
         val policyRef = SecPolicyCreateSSL(true, null)
