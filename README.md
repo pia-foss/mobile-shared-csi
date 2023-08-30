@@ -13,12 +13,11 @@ With this library, clients from iOS and Android can submit debug information.
 ### Requirements
  - Git (latest)
  - Xcode (latest)
- - IntelliJ IDEA (latest)
+ - Android Studio (latest)
  - Gradle (latest)
  - ADB installed
  - NDK (latest)
  - Android 4.1+
- - Cocoapods
 
 #### Download Codebase
 Using the terminal:
@@ -29,31 +28,21 @@ type in what folder you want to put in without the **
 
 #### Building
 
-Once the project is cloned, you can build the binaries by running `./gradlew bundleDebugAar` or `./gradlew bundleReleaseAar` for Android. And, `./gradlew iOSBinaries` for iOS. You can find the binaries at `[PROJECT_DIR]/build/outputs/aar` and `[PROJECT_DIR]/build/bin/iOS` accordingly
+Once the project is cloned, you can build the binaries by running the tasks `./gradlew bundleDebugAar` or `./gradlew bundleReleaseAar` for Android. And, `./gradlew assembleCsiDebugXCFramework` or `./gradlew assembleCsiReleaseXCFramework` for iOS. You can find the binaries at `[PROJECT_DIR]/csi/build/outputs/aar` and `[PROJECT_DIR]/csi/build/XCFrameworks` accordingly.
 
 ## Usage
 
 ### Android 
 
-To use this project in your Android apps, you need to import the generated AAR module and include the following dependencies in your application's gradle. See the project's `build.gradle` for the specific versions.
-
-`
-implementation 'io.ktor:ktor-client-okhttp:x.x.x'
-implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:x.x.x'
-implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:x.x.x'
-`
+To use this project in Android, you can run the task `./gradlew publishAndroidReleasePublicationToMavenLocal`. This will publish the package to your maven local (Make sure to have included `mavenLocal()` as part of your gradle repositories). Once successful, you can set the dependency as per any other package, e.g.:
+```
+implementation("com.kape.android:csi:[version_number]")
+```
+where `[version_number]` is the version as set in `csi/build.gradle.kts`.
 
 ### iOS
 
-To use this project in your iOS apps, just add the library as a pod
-
-`pod "PIACSI", :git => "http://github.com/pia-foss/mobile-common-csi`
-
-After the pod install is completed, when you run your app, the PIACSI pod will generate the `PIACSI.framework`.
-
-### Add new classes or change iOS project structure
-
-When adding new classes or if you need to change the project structure of the `PIACSI` module you will need to update the `PIACSI.podspec` file. This file is located in the root path of the project.
+To use this project in iOS, once you have built `csi.xcframework`. You can go to your project target. Build Phases. Link Binary With Libraries. (or alternatively drag the file there and skip the rest) Click the `+`. Add Other. Add Files. And look for `csi.xcframework`.
 
 ## Documentation
 
@@ -65,7 +54,7 @@ Code structure via packages:
 
 * `commonMain` - Common business logic.
 * `androidMain` - Android's bridging layer, providing the platform specific dependencies.
-* `iosApp` - iOS's bridging layer, providing the platform specific dependencies.
+* `iosMain` - iOS's bridging layer, providing the platform specific dependencies.
 
 #### Significant Classes and Interfaces
 
@@ -94,6 +83,6 @@ This project is licensed under the [MIT (Expat) license](https://choosealicense.
 
 - Ktor - © 2020 (http://ktor.io)
 
-[pia-image]: https://www.privateinternetaccess.com/assets/PIALogo2x-0d1e1094ac909ea4c93df06e2da3db4ee8a73d8b2770f0f7d768a8603c62a82f.png
+[pia-image]: https://assets-cms.privateinternetaccess.com/img/frontend/pia_menu_logo_light.svg
 [pia-url]: https://www.privateinternetaccess.com/
 [pia-wiki]: https://en.wikipedia.org/wiki/Private_Internet_Access
