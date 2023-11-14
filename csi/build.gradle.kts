@@ -38,7 +38,7 @@ android {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     group = "com.kape.android"
-    version = "1.3.0"
+    version = "1.3.1"
 
     // Enable the default target hierarchy.
     // It's a template for all possible targets and their shared source sets hardcoded in the
@@ -60,7 +60,10 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        tvosX64(),
+        tvosSimulatorArm64(),
+        tvosArm64()
     ).forEach {
         it.binaries.framework {
             xcf.add(this)
@@ -86,7 +89,12 @@ kotlin {
         }
         val iosMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-ios:2.3.3")
+                implementation("io.ktor:ktor-client-darwin:2.3.3")
+            }
+        }
+        val tvosMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.3.3")
             }
         }
     }
