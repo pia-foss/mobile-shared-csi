@@ -10,7 +10,7 @@ plugins {
 publishing {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/xvpn/cpz_pia-mobile_shared_csi/")
+            url = uri("https://maven.pkg.github.com/pia-foss/mobile-shared-csi/")
             credentials {
                 username = System.getenv("GITHUB_USERNAME")
                 password = System.getenv("GITHUB_TOKEN")
