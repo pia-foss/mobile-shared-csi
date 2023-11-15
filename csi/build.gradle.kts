@@ -38,7 +38,7 @@ android {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     group = "com.kape.android"
-    version = "1.3.1"
+    version = "1.3.2"
 
     // Enable the default target hierarchy.
     // It's a template for all possible targets and their shared source sets hardcoded in the
