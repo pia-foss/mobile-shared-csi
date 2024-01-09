@@ -65,6 +65,11 @@ kotlin {
         tvosSimulatorArm64(),
         tvosArm64()
     ).forEach {
+        val main by it.compilations.getting {
+            val fixUndefinedSymbols by cinterops.creating {
+                defFile(project.file("src/iosMain/kotlin/com/privateinternetaccess/csi/internals/cinterop/fix_undefined_symbols.def"))
+            }
+        }
         it.binaries.framework {
             xcf.add(this)
         }

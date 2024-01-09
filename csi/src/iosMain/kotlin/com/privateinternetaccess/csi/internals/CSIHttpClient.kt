@@ -35,7 +35,7 @@ actual object CSIHttpClient {
         certificate: String?,
         pinnedEndpoint: Pair<String, String>?
     ): Pair<HttpClient?, CSIRequestError.CSIException?> {
-        return Pair(HttpClient(Ios) {
+        return Pair(HttpClient(Darwin) {
             expectSuccess = false
             install(HttpTimeout) {
                 requestTimeoutMillis = CSI.REQUEST_TIMEOUT_MS
