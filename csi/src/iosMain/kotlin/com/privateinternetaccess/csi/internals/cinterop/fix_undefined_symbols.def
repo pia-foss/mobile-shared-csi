@@ -1,0 +1,3 @@
+package = fix_undefined_symbols
+---
+void * OBJC_CLASS_$_NSURLSessionWebSocketMessage = 0;
