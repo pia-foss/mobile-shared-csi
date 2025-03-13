@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -22,10 +23,9 @@ publishing {
 android {
     namespace = "com.kape.csi"
 
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
     }
 
     buildTypes {
@@ -40,18 +40,18 @@ kotlin {
     group = "com.kape.android"
     version = "1.3.2"
 
+    jvmToolchain(17)
+
     // Enable the default target hierarchy.
     // It's a template for all possible targets and their shared source sets hardcoded in the
     // Kotlin Gradle plugin.
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 
     // Android
-    android {
+    androidTarget {
         publishLibraryVariants("release")
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -78,29 +78,34 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:2.3.3")
+                implementation("io.ktor:ktor-client-core:3.1.1")
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("org.bouncycastle:bcprov-jdk18on:1.76")
-                implementation("io.ktor:ktor-client-okhttp:2.3.3")
+                implementation("org.bouncycastle:bcprov-jdk18on:1.80")
+                implementation("io.ktor:ktor-client-okhttp:3.1.1")
                 implementation("org.jetbrains.kotlin:kotlin-stdlib")
             }
         }
         val iosMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.3")
+                implementation("io.ktor:ktor-client-darwin:3.1.0")
             }
         }
         val tvosMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.3")
+                implementation("io.ktor:ktor-client-darwin:3.1.0")
             }
         }
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
